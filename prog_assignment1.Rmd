@@ -4,7 +4,7 @@ author: "PNM"
 date: "January 7, 2018"
 output: html_document
 ---
-
+  
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
@@ -18,7 +18,7 @@ library(RCurl)
 ## Read the data 
 
 ```{r}
-setwd("C:\\Users\\Parikshit\\Documents\\Coursera_Data_Scientist_Spec\\Course_5")
+setwd("C:\\Users\\mehtap\\Documents\\Coursera\\Course5")
 filename <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
 if (url.exists(filename)) {
@@ -27,8 +27,8 @@ if (url.exists(filename)) {
 }
 
 # unzip the file
-unzip("activity.zip", exdir = "C:\\Users\\Parikshit\\Documents\\Coursera_Data_Scientist_Spec\\Course_5")
-setwd("C:\\Users\\Parikshit\\Documents\\Coursera_Data_Scientist_Spec\\Course_5")
+unzip("activity.zip", exdir = "C:\\Users\\mehtap\\Documents\\Coursera\\Course5")
+setwd("C:\\Users\\mehtap\\Documents\\Coursera\\Course5")
 
 # Now read the CSV file and create the data frame
 
@@ -38,13 +38,16 @@ rawdata <- read.csv("activity.csv",na.strings = "NA")
 ## What is mean total number of steps taken per day?
 ```{r}
 tempdata <- rawdata %>% 
-                group_by(date) %>%
-                summarise(sumsteps = sum(steps,na.rm = TRUE))
+  group_by(date) %>%
+  summarise(sumsteps = sum(steps,na.rm = TRUE))
 ggplot(tempdata) +geom_histogram(mapping = aes(x = sumsteps), na.rm = TRUE)
 
-tempdata  %>% summarise(meansteps = mean(sumsteps , na.rm = T), mediansteps = median(sumsteps, na.rm = TRUE))
+tempsub1 <- tempdata  %>% summarise(meansteps = mean(sumsteps , na.rm = T), mediansteps = median(sumsteps, na.rm = TRUE))
 
 ```
+
+The mean steps are `r tempsub1$meansteps` and median steps are `r tempsub1$mediansteps`.
+
 
 ## What is the average daily activity pattern?
 
@@ -52,7 +55,7 @@ tempdata  %>% summarise(meansteps = mean(sumsteps , na.rm = T), mediansteps = me
 tempdata2 <- rawdata %>% group_by(as.factor(interval)) %>% summarise(avgsteps = mean(steps, na.rm = TRUE))
 
 plot(x = tempdata2$`as.factor(interval)`, y= tempdata2$avgsteps, type = "l",
-      main = "Average Steps taken by time interval",
+     main = "Average Steps taken by time interval",
      xlab = "Interval",
      ylab = "Step Count")
 # find the location of the maximum point
@@ -81,14 +84,17 @@ for (i in 1:nrow(newdata)) {
 
 # now create the histogram of the total steps taken per day 
 tempdata3 <- newdata %>% 
-                group_by(date) %>%
-                summarise(sumsteps = sum(steps))
+  group_by(date) %>%
+  summarise(sumsteps = sum(steps))
 ggplot(tempdata3) +geom_histogram(mapping = aes(x = sumsteps))
 
 # report out the mean and median values of the total steps 
-tempdata3  %>% summarise(meansteps = mean(sumsteps), mediansteps = median(sumsteps))
+tempsub2 <-tempdata3  %>% summarise(meansteps = mean(sumsteps), mediansteps = median(sumsteps))
+
 
 ```
+
+The mean steps are `r tempsub2$meansteps` and median steps are `r tempsub2$mediansteps`.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -108,4 +114,3 @@ par(mfrow = c(2,1))
 plot(tempdata5$Interval, tempdata5$avgsteps, type = "l", main = "Weekday")
 plot(tempdata6$Interval, tempdata6$avgsteps, type = "l", main = "Weekend")
 ```
-
