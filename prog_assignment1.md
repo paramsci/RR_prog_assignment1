@@ -7,19 +7,14 @@ output:
     keep_md: yes
 ---
   
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(ggplot2)
-library(utils)
-library(RCurl)
-```
+
 
 # Course 5 - Programming Assignment 1 
 
 ## Read the data 
 
-```{r}
+
+```r
 setwd("C:\\Users\\mehtap\\Documents\\Coursera\\Course5")
 filename <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 
@@ -38,28 +33,46 @@ rawdata <- read.csv("activity.csv",na.strings = "NA")
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 tempdata <- rawdata %>% 
   group_by(date) %>%
   summarise(sumsteps = sum(steps,na.rm = TRUE))
 ggplot(tempdata) +geom_histogram(mapping = aes(x = sumsteps), na.rm = TRUE)
-
-tempsub1 <- tempdata  %>% summarise(meansteps = mean(sumsteps , na.rm = T), mediansteps = median(sumsteps, na.rm = TRUE))
-
 ```
 
-The mean steps are `r tempsub1$meansteps` and median steps are `r tempsub1$mediansteps`.
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](prog_assignment1_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
+tempsub1 <- tempdata  %>% summarise(meansteps = mean(sumsteps , na.rm = T), mediansteps = median(sumsteps, na.rm = TRUE))
+```
+
+```
+## Warning: package 'bindrcpp' was built under R version 3.3.3
+```
+
+The mean steps are 9354.2295082 and median steps are 10395.
 
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 tempdata2 <- rawdata %>% group_by(as.factor(interval)) %>% summarise(avgsteps = mean(steps, na.rm = TRUE))
 
 plot(x = tempdata2$`as.factor(interval)`, y= tempdata2$avgsteps, type = "l",
      main = "Average Steps taken by time interval",
      xlab = "Interval",
      ylab = "Step Count")
+```
+
+![](prog_assignment1_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 # find the location of the maximum point
 maxindex <- which( tempdata2$avgsteps == max(tempdata2$avgsteps))
 
@@ -67,9 +80,15 @@ maxindex <- which( tempdata2$avgsteps == max(tempdata2$avgsteps))
 tempdata2$`as.factor(interval)`[maxindex]
 ```
 
+```
+## [1] 835
+## 288 Levels: 0 5 10 15 20 25 30 35 40 45 50 55 100 105 110 115 120 ... 2355
+```
+
 ## Imputing missing values 
 
-```{r}
+
+```r
 # Calculate and report the total number of missing values
 TotalMissingValues <- sum(is.na(rawdata))
 # Fill in the missing values 
@@ -89,18 +108,25 @@ tempdata3 <- newdata %>%
   group_by(date) %>%
   summarise(sumsteps = sum(steps))
 ggplot(tempdata3) +geom_histogram(mapping = aes(x = sumsteps))
-
-# report out the mean and median values of the total steps 
-tempsub2 <-tempdata3  %>% summarise(meansteps = mean(sumsteps), mediansteps = median(sumsteps))
-
-
 ```
 
-The mean steps are `r tempsub2$meansteps` and median steps are `r tempsub2$mediansteps`.
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](prog_assignment1_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
+# report out the mean and median values of the total steps 
+tempsub2 <-tempdata3  %>% summarise(meansteps = mean(sumsteps), mediansteps = median(sumsteps))
+```
+
+The mean steps are 9419.08073 and median steps are 1.0395\times 10^{4}.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 # create a factor variable indicating if the date is a weekday or weekend 
 weekdayvec <- weekdays(as.Date(newdata$date), abbr = TRUE)
 
@@ -116,3 +142,5 @@ par(mfrow = c(2,1))
 plot(tempdata5$Interval, tempdata5$avgsteps, type = "l", main = "Weekday")
 plot(tempdata6$Interval, tempdata6$avgsteps, type = "l", main = "Weekend")
 ```
+
+![](prog_assignment1_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
